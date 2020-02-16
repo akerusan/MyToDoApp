@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">MyToDoApp</string>
+    <string name="action_settings">Settings</string>
+    <string name="app_logo">AppLogoCheckBox</string>
+
+    <string name="modeSelectorAll">All</string>
+    <string name="modeSelectorActive">Active</string>
+    <string name="modeSelectorCompleted">Completed</string>
+    <string name="clearCompleted">Clear Completed</string>
+
+    <string name="taskEraser">taskEraser</string>
+    <string name="todotask">ToDoTask</string>
+
+    <string name="zeroOrOneItem">&#160;item left</string>
+    <string name="multipleItems">&#160;items left</string>
+
+    <string name="addDialogTitle">What Needs To Be Done ?</string>
+    <string name="editDialogTitle">Edit Your Task</string>
+
+    <string name="cancelBtn">Cancel</string>
+    <string name="addBtn">Add</string>
+    <string name="editBtn">Edit</string>
+</resources>

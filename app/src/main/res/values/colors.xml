@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#18BDD6</color>
+    <color name="colorPrimaryDark">#0F6088</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="mainBackground">#DDEBF7</color>
+    <color name="tileBackground">#9DC3E6</color>
+    <color name="completedBackground">#AFABAB</color>
+    <color name="controlBarBackground">#BDD7EE</color>
+
+    <color name="red">@android:color/holo_red_light</color>
+</resources>
