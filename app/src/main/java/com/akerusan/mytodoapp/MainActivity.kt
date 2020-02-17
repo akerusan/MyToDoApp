@@ -39,10 +39,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         mContext = this@MainActivity
         listView = list_view
 
-        // 前回の利用のデータがあればロードする
+        // 既存データがあればロードする
         loadData()
 
         // 各リスナーの設定
+        set_all_check_all_off.setOnClickListener(this)
+        set_all_check_all_on.setOnClickListener(this)
         show_all.setOnClickListener(this)
         show_active.setOnClickListener(this)
         show_completed.setOnClickListener(this)
@@ -52,9 +54,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             addTaskDialog()
         }
 
-        // listViewへの変更検知
+        // listView内の変更の検知
         listView!!.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            var leftItems = 0
             var checkedItems = 0
 
             if (todoListItems.size == 0){
@@ -68,13 +69,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             // 残りのタスクの表示
             for (item in todoListItems){
-                if (!item.isCheckboxChecked()){
-                    leftItems++
-                } else {
+                if (item.isCheckboxChecked()) {
                     checkedItems++
                 }
             }
-            editLeftItems(leftItems)
+            editLeftItems(todoListItems.size - checkedItems)
 
             // 完了のタスクの存在次第、クリアボタン表示
             if (checkedItems > 0){
@@ -82,12 +81,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             } else {
                 clear_completed_task.visibility = View.INVISIBLE
             }
+
+            // 全タスクのチェック状態により、チェックオールボタンON/OFF
+            if (checkedItems == todoListItems.size){
+                set_all_check_all_on.visibility = View.GONE
+                set_all_check_all_off.visibility = View.VISIBLE
+            } else {
+                set_all_check_all_on.visibility = View.VISIBLE
+                set_all_check_all_off.visibility = View.GONE
+            }
         }
     }
 
     override fun onClick(v: View?) {
         if (todoListItems.size > 0){
             when (v) {
+                set_all_check_all_on -> {
+                    setAllCheckOn()
+                }
+                set_all_check_all_off -> {
+                    setAllCheckOff()
+                }
                 show_all -> {
                     showActiveMode = false
                     showCompletedMode = false
@@ -114,18 +128,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                     todoListItems = notCompletedItemsList
-
-                    when {
-                        showActiveMode -> {
-                            populateTaskListOnActiveMode()
-                        }
-                        showCompletedMode -> {
-                            populateTaskLiskOnCompletedMode()
-                        }
-                        else -> {
-                            mListAdapter!!.setItemsList(todoListItems)
-                        }
-                    }
+                    populateTaskList(todoListItems)
                 }
             }
         }
@@ -171,10 +174,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
 
+        // キャンセルボタン押下時
         dialog.dialog_cancel.setOnClickListener {
             dialog.dismiss()
         }
 
+        // 追加ボタン押下時
         dialog.dialog_add.setOnClickListener{
             val addText = dialog.findViewById(R.id.add_task_text) as EditText
             val text = addText.text.toString()
@@ -200,10 +205,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
 
+        // キャンセルボタン押下時
         dialog.dialog_cancel_edit.setOnClickListener {
             dialog.dismiss()
         }
 
+        // 編集ボタン押下時
         dialog.dialog_edit.setOnClickListener{
             val editedText = dialog.findViewById(R.id.edit_task_text) as EditText
             val text = editedText.text.toString()
@@ -217,7 +224,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     /**
-     * 全タスク表示時のリストをadaptaterに送信
+     * ListViewにタスクリスト入れ込み
      */
     private fun populateTaskList(list: ArrayList<Task>?) {
         if (list != null && list.size > 0) {
@@ -273,7 +280,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     /**
-     * 未完了のタスクの表示
+     * 全タスクを完了にする
+     */
+    private fun setAllCheckOn(){
+        for (item in todoListItems){
+            item.setCheckboxChecked(true)
+        }
+        populateTaskList(todoListItems)
+    }
+
+    /**
+     * 全タスクを未完了にする
+     */
+    private fun setAllCheckOff(){
+        for (item in todoListItems){
+            item.setCheckboxChecked(false)
+        }
+        populateTaskList(todoListItems)
+    }
+
+    /**
+     * 未完了のタスク数を表示する
      */
     private fun editLeftItems(leftItems: Int){
         if (todoListItems.size != 0){
@@ -291,7 +318,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     /**
-     * リスト表示設定変更のボタンの見た目変更
+     * リスト表示設定変更のボタン見た目を変更する
      */
     private fun changeModeButtonAppearance(){
         when {

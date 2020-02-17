@@ -24,13 +24,28 @@
             android:paddingTop="2dp"
             android:background="@color/controlBarBackground">
 
+            <ImageButton
+                android:id="@+id/set_all_check_all_on"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/ic_check_box_off"
+                android:visibility="visible"/>
+
+            <ImageButton
+                android:id="@+id/set_all_check_all_off"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/ic_check_box_on"
+                android:visibility="gone"/>
+
             <TextView
                 android:id="@+id/show_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/mode_selector_button_background"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="5dp"
                 android:padding="5dp"
                 android:gravity="center"
                 android:text="@string/modeSelectorAll"
@@ -52,8 +67,7 @@
                 android:id="@+id/show_completed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="5dp"
                 android:padding="5dp"
                 android:gravity="center"
                 android:text="@string/modeSelectorCompleted"
@@ -66,11 +80,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
                 android:paddingEnd="10dp"
-                android:paddingStart="10dp"
+                android:padding="5dp"
                 android:gravity="end"
                 android:text="@string/clearCompleted"
                 android:textColor="@color/colorPrimaryDark"
-                android:visibility="invisible"/>
+                android:visibility="visible"/>
         </LinearLayout>
 
         <LinearLayout
