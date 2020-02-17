@@ -39,47 +39,45 @@ class ListAdapter (private val context: Context, itemList: ArrayList<Task>) : Ba
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var view = convertView
+        val viewHolder: ViewHolder
 
         if (view == null) {
-            val viewHolder =
-                ViewHolder()
+            // viewの利用で新しいviewHolderをインスタンス化
             view = mInflater.inflate(R.layout.task_layout, null)
-            viewHolder.tile = view.findViewById(R.id.tile)
-            viewHolder.taskLayoutText = view.findViewById(R.id.task_layout_text)
-            viewHolder.taskLayoutCheckbox = view.findViewById(R.id.task_layout_checkbox)
-            viewHolder.taskLayoutDelete = view.findViewById(R.id.task_layout_delete)
+            viewHolder = ViewHolder(view)
             view.tag = viewHolder
+        } else {
+            // タグを利用でviewHolderを初期
+            viewHolder = view.tag as ViewHolder
         }
 
-        val viewHolder = view!!.tag as ViewHolder
+        // Taskオブジェクトを取得
         val item = items[position]
 
-        if (item != null && viewHolder != null) {
-            viewHolder.taskLayoutDelete!!.setOnClickListener {
-                listener!!.onDeleteClicked(position, item) }
+        // viewHolderの設定
+        viewHolder.taskLayoutDelete.setOnClickListener {
+            listener!!.onDeleteClicked(position, item) }
 
-            viewHolder.taskLayoutText!!.text = item.getText()
-            viewHolder.taskLayoutText!!.setOnClickListener {
-                listener!!.onEditClicked(position, item) }
+        viewHolder.taskLayoutText.text = item.getText()
+        viewHolder.taskLayoutText.setOnClickListener {
+            listener!!.onEditClicked(position, item) }
 
-            viewHolder.taskLayoutCheckbox!!.tag = position
-            viewHolder.taskLayoutCheckbox!!.isChecked = item.isCheckboxChecked()
-            viewHolder.taskLayoutCheckbox!!.setOnClickListener {
-                listener!!.onCheckboxClicked(position, item) }
-        }
+        viewHolder.taskLayoutCheckbox.tag = position
+        viewHolder.taskLayoutCheckbox.isChecked = item.isCheckboxChecked()
+        viewHolder.taskLayoutCheckbox.setOnClickListener {
+            listener!!.onCheckboxClicked(position, item) }
 
-        // チェックボックスの状態により、文字の色と車線の有り無しの変更
+        // チェックボックスの状態により、文字の色と斜線の有り無しの変更
         if (item.isCheckboxChecked()){
-            viewHolder.taskLayoutText!!.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-            viewHolder.taskLayoutText!!.setTextColor(Color.GRAY)
+            viewHolder.taskLayoutText.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            viewHolder.taskLayoutText.setTextColor(Color.GRAY)
         } else {
-            viewHolder.taskLayoutText!!.paintFlags = 0
-            viewHolder.taskLayoutText!!.setTextColor(ContextCompat.getColor(context,
+            viewHolder.taskLayoutText.paintFlags = 0
+            viewHolder.taskLayoutText.setTextColor(ContextCompat.getColor(context,
                 R.color.colorPrimaryDark
             ))
         }
-
-        return view
+        return view!!
     }
 
     override fun getItem(position: Int): Any {
@@ -97,10 +95,9 @@ class ListAdapter (private val context: Context, itemList: ArrayList<Task>) : Ba
     /**
      * ListViewのホルダー
      */
-    class ViewHolder {
-        var tile: LinearLayout? = null
-        var taskLayoutCheckbox: CheckBox? = null
-        var taskLayoutText: TextView? = null
-        var taskLayoutDelete: ImageButton? = null
+    class ViewHolder(view: View?) {
+        val taskLayoutCheckbox: CheckBox = view!!.findViewById(R.id.task_layout_checkbox)
+        val taskLayoutText: TextView = view!!.findViewById(R.id.task_layout_text)
+        val taskLayoutDelete: ImageButton = view!!.findViewById(R.id.task_layout_delete)
     }
 }
