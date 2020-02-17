@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.Window
+import android.view.animation.TranslateAnimation
 import android.widget.EditText
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
@@ -58,15 +59,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         listView!!.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             var checkedItems = 0
 
-            if (todoListItems.size == 0){
-                showActiveMode = false
-                showCompletedMode = false
-                changeModeButtonAppearance()
-                mode_selector_panel.visibility = View.GONE
-            } else {
-                mode_selector_panel.visibility = View.VISIBLE
-            }
-
             // 残りのタスクの表示
             for (item in todoListItems){
                 if (item.isCheckboxChecked()) {
@@ -76,19 +68,38 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             editLeftItems(todoListItems.size - checkedItems)
 
             // 完了のタスクの存在次第、クリアボタン表示
-            if (checkedItems > 0){
+            if (checkedItems != 0){
                 clear_completed_task.visibility = View.VISIBLE
             } else {
                 clear_completed_task.visibility = View.INVISIBLE
             }
 
             // 全タスクのチェック状態により、チェックオールボタンON/OFF
-            if (checkedItems == todoListItems.size){
+            if (checkedItems == todoListItems.size && checkedItems != 0){
                 set_all_check_all_on.visibility = View.GONE
                 set_all_check_all_off.visibility = View.VISIBLE
             } else {
                 set_all_check_all_on.visibility = View.VISIBLE
                 set_all_check_all_off.visibility = View.GONE
+            }
+
+            // リスト表示設定パネルの表示が必要かどうかの確認
+            if (todoListItems.size == 0 && mode_selector_panel.visibility == View.VISIBLE){
+                // パネルの見た目初期化
+                showActiveMode = false
+                showCompletedMode = false
+                changeModeButtonAppearance()
+                // パネル非表示
+                mode_selector_panel.visibility = View.GONE
+                val animate = TranslateAnimation(0f, 0f, 0f, -mode_selector_panel.height.toFloat())
+                animate.duration = 500
+                mode_selector_panel.startAnimation(animate)
+            } else if (todoListItems.size > 0 && mode_selector_panel.visibility == View.GONE){
+                // パネル非表示
+                mode_selector_panel.visibility = View.VISIBLE
+                val animate = TranslateAnimation(0f, 0f, -mode_selector_panel.height.toFloat(), 0f)
+                animate.duration = 500
+                mode_selector_panel.startAnimation(animate)
             }
         }
     }
@@ -118,7 +129,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     showActiveMode = false
                     showCompletedMode = true
                     changeModeButtonAppearance()
-                    populateTaskLiskOnCompletedMode()
+                    populateTaskListOnCompletedMode()
                 }
                 clear_completed_task -> {
                     val notCompletedItemsList = ArrayList<Task>()
@@ -227,7 +238,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * ListViewにタスクリスト入れ込み
      */
     private fun populateTaskList(list: ArrayList<Task>?) {
-        if (list != null && list.size > 0) {
+        if (list != null) {
             if (mListAdapter == null) {
                 mListAdapter = ListAdapter(
                     mContext!!,
@@ -241,22 +252,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         populateTaskListOnActiveMode()
                     }
                     showCompletedMode -> {
-                        populateTaskLiskOnCompletedMode()
+                        populateTaskListOnCompletedMode()
                     }
                     else -> {
                         mListAdapter!!.setItemsList(todoListItems)
                     }
                 }
             }
-        } else {
-            mListAdapter!!.setItemsList(todoListItems)
         }
     }
 
     /**
      * 完了タスクのみ表示時のリスト送信
      */
-    private fun populateTaskLiskOnCompletedMode(){
+    private fun populateTaskListOnCompletedMode(){
         val completedItemsList = ArrayList<Task>()
         for (item in todoListItems){
             if (item.isCheckboxChecked()){
@@ -318,7 +327,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     /**
-     * リスト表示設定変更のボタン見た目を変更する
+     * リスト表示設定パネルのボタン見た目を変更する
      */
     private fun changeModeButtonAppearance(){
         when {

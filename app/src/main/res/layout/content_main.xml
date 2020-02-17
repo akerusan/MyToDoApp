@@ -22,7 +22,8 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingTop="2dp"
-            android:background="@color/controlBarBackground">
+            android:background="@color/controlBarBackground"
+            android:visibility="gone">
 
             <ImageButton
                 android:id="@+id/set_all_check_all_on"
